@@ -1,212 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Responsive Web Calculator</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"></script>
-    <style>
-        body {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: pink;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding-top: 10%;
-        }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Responsive Web Calculator</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/10.6.4/math.js"></script>
 
-        .Calculator {
-            width: 30%;
-            border-radius: 20%;
-            box-shadow: 0px 19px 16px rgba(0, 0, 0, 0.1);
-            padding: 70px;
-            background-color: plum;
-            position: relative;
-        }
+  <style>
+    body {
+      font-family: 'Courier New', Courier, monospace;
+      background-color: pink;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
 
-        /* 3 Dots Menu */
+    .Calculator {
+      width: 90%;
+      max-width: 400px;
+      border-radius: 25px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      padding: 40px 20px;
+      background-color: plum;
+      position: relative;
+      box-sizing: border-box;
+    }
+
+    /* 3 Dots Menu */
     .menu {
-    position: absolute;
-    top: 20px;
-    left: 50%;
-    transform: translateX(-50%); /* centers horizontally */
-    cursor: pointer;
-    font-size: 24px;
-}
+      position: absolute;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      cursor: pointer;
+      font-size: 24px;
+      font-weight: bold;
+    }
 
+    .submenu {
+      display: none;
+      position: absolute;
+      top: 45px;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      padding: 10px;
+      z-index: 100;
+    }
 
-        .submenu {
-            display: none;
-            position: absolute;
-            top: 45px;
-            right: 30px;
-            background-color: #fff;
-            border-radius: 10px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-            padding: 10px;
-            z-index: 100;
-        }
+    .submenu button {
+      display: block;
+      background: none;
+      border: none;
+      color: #333;
+      font-size: 16px;
+      cursor: pointer;
+      width: 100%;
+      text-align: center;
+      padding: 6px 10px;
+    }
 
-        .submenu button {
-            display: block;
-            background: none;
-            border: none;
-            color: #333;
-            font-size: 16px;
-            cursor: pointer;
-            width: 100%;
-            text-align: left;
-            padding: 5px 10px;
-        }
+    .submenu button:hover {
+      background-color: #f0f0f0;
+    }
 
-        .submenu button:hover {
-            background-color: #f0f0f0;
-        }
+    .display {
+      width: 100%;
+      height: 60px;
+      font-size: 1.5rem;
+      text-align: right;
+      padding: 10px 15px;
+      border: none;
+      border-radius: 10px;
+      box-sizing: border-box;
+      margin-top: 50px;
+      background-color: #f9f9f9;
+    }
 
-        .display {
-            width: 70%;
-            height: 170%;
-            padding: 10%;
-            padding-left: 20%;
-        }
+    .buttons {
+      padding-top: 20px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+    }
 
-        .buttons {
-            padding-left: 10%;
-            padding-top: 20px;
-            padding-right: 40px;
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-        }
+    .button {
+      background-color: #03a9f4;
+      border: none;
+      font-size: 1.3rem;
+      padding: 15px;
+      cursor: pointer;
+      border-radius: 15px;
+      transition: background-color 0.3s, transform 0.2s;
+      color: white;
+    }
 
-        .button {
-            background-color: #03a9f4;
-            border: none;
-            font-size: 1.5rem;
-            padding: 20px;
-            cursor: pointer;
-            border-radius: 20px;
-            transition: background-color 0.3s, transform 0.2s;
-            color: white;
-        }
+    .button:hover {
+      background-color: #0288d1;
+      transform: scale(1.05);
+    }
 
-        .button:hover {
-            background-color: #0288d1;
-            transform: scale(1.05);
-        }
+    .scientific-buttons {
+      display: none;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
 
-        .scientific-buttons {
-            display: none;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            margin-top: 15px;
-            padding-left: 10%;
-            padding-right: 40px;
-        }
+    .scientific-buttons.active {
+      display: grid;
+    }
 
-        .scientific-buttons.active {
-            display: grid;
-        }
-    </style>
+   
+    @media (max-width: 768px) {
+      .Calculator {
+        padding: 30px 15px;
+      }
+      .button {
+        font-size: 1.1rem;
+        padding: 12px;
+      }
+      .display {
+        font-size: 1.3rem;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .Calculator {
+        max-width: 320px;
+        padding: 25px 10px;
+      }
+      .button {
+        font-size: 1rem;
+        padding: 10px;
+        border-radius: 10px;
+      }
+      .display {
+        font-size: 1.1rem;
+        height: 50px;
+      }
+    }
+  </style>
 </head>
+
 <body>
-    <div class="Calculator">
-        <!-- 3 Dots Menu -->
-        <div class="menu" onclick="toggleMenu()">⋮</div>
-        <div class="submenu" id="submenu">
-            <button onclick="toggleScientific()">Scientific Mode/Simple Mode</button>
-        </div>
-
-        <input type="text" id="display" class="display" disabled>
-
-        <div class="buttons">
-            <button class="button clear" onclick="clearDisplay()">C</button>
-            <button class="button operator" onclick="appendOperation('/')">/</button>
-            <button class="button operator" onclick="appendOperation('+')">+</button>
-            <button class="button operator" onclick="appendOperation('-')">-</button>
-            <button class="button operator" onclick="appendOperation('*')">*</button>
-            <button class="button" onclick="calculate()">=</button>
-
-            <button class="button" onclick="appendNumber('7')">7</button>
-            <button class="button" onclick="appendNumber('8')">8</button>
-            <button class="button" onclick="appendNumber('9')">9</button>
-
-            <button class="button" onclick="appendNumber('6')">6</button>
-            <button class="button" onclick="appendNumber('5')">5</button>
-            <button class="button" onclick="appendNumber('4')">4</button>
-
-            <button class="button" onclick="appendNumber('3')">3</button>
-            <button class="button" onclick="appendNumber('2')">2</button>
-            <button class="button" onclick="appendNumber('1')">1</button>
-            <button class="button" onclick="appendNumber('0')">0</button>
-        </div>
-
-        <!-- Scientific Buttons -->
-        <div class="scientific-buttons" id="scientific">
-            <button class="button" onclick="appendFunction('sin(')">sin</button>
-            <button class="button" onclick="appendFunction('cos(')">cos</button>
-            <button class="button" onclick="appendFunction('tan(')">tan</button>
-            <button class="button" onclick="appendFunction('log(')">log</button>
-            <button class="button" onclick="appendFunction('sqrt(')">√</button>
-            <button class="button" onclick="appendFunction('pi')">π</button>
-            <button class="button" onclick="appendFunction('^')">^</button>
-            <button class="button" onclick="appendFunction(')')">)</button>
-        </div>
+  <div class="Calculator">
+    <!-- 3 Dots Menu -->
+    <div class="menu" onclick="toggleMenu()">...</div>
+    <div class="submenu" id="submenu">
+      <button onclick="toggleScientific()">Scientific Mode / Simple Mode</button>
     </div>
 
-    <script>
-        let currentInput = '';
+    <input type="text" id="display" class="display" disabled />
 
-        // Add number or symbol to display
-        function appendNumber(number) {
-            currentInput += number;
-            document.getElementById('display').value = currentInput;
-        }
+    <div class="buttons">
+      <button class="button clear" onclick="clearDisplay()">C</button>
+      <button class="button operator" onclick="appendOperation('/')">/</button>
+      <button class="button operator" onclick="appendOperation('+')">+</button>
+      <button class="button operator" onclick="appendOperation('-')">-</button>
+      <button class="button operator" onclick="appendOperation('*')">*</button>
+      <button class="button" onclick="calculate()">=</button>
 
-        function appendOperation(op) {
-            currentInput += op;
-            document.getElementById('display').value = currentInput;
-        }
+      <button class="button" onclick="appendNumber('7')">7</button>
+      <button class="button" onclick="appendNumber('8')">8</button>
+      <button class="button" onclick="appendNumber('9')">9</button>
 
-        function appendFunction(func) {
-            currentInput += func;
-            document.getElementById('display').value = currentInput;
-        }
+      <button class="button" onclick="appendNumber('6')">6</button>
+      <button class="button" onclick="appendNumber('5')">5</button>
+      <button class="button" onclick="appendNumber('4')">4</button>
 
-        function calculate() {
-            try {
-                const result = math.evaluate(currentInput);
-                document.getElementById('display').value = result;
-                currentInput = result.toString();
-            } catch {
-                document.getElementById('display').value = "Error";
-            }
-        }
+      <button class="button" onclick="appendNumber('3')">3</button>
+      <button class="button" onclick="appendNumber('2')">2</button>
+      <button class="button" onclick="appendNumber('1')">1</button>
+      <button class="button" onclick="appendNumber('0')">0</button>
+    </div>
 
-        function clearDisplay() {
-            currentInput = '';
-            document.getElementById('display').value = '';
-        }
+    <!-- Scientific Buttons -->
+    <div class="scientific-buttons" id="scientific">
+      <button class="button" onclick="appendFunction('sin(')">sin</button>
+      <button class="button" onclick="appendFunction('cos(')">cos</button>
+      <button class="button" onclick="appendFunction('tan(')">tan</button>
+      <button class="button" onclick="appendFunction('log(')">log</button>
+      <button class="button" onclick="appendFunction('sqrt(')">√</button>
+      <button class="button" onclick="appendFunction('pi')">π</button>
+      <button class="button" onclick="appendFunction('^')">^</button>
+      <button class="button" onclick="appendFunction(')')">)</button>
+    </div>
+  </div>
 
-        // Toggle 3 dots menu
-        function toggleMenu() {
-            const menu = document.getElementById('submenu');
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
-        }
+  <script>
+    let currentInput = "";
 
-        // Toggle Scientific Buttons
-        function toggleScientific() {
-            const sci = document.getElementById('scientific');
-            sci.classList.toggle('active');
-            document.getElementById('submenu').style.display = 'none';
-        }
+    function appendNumber(number) {
+      currentInput += number;
+      document.getElementById("display").value = currentInput;
+    }
 
-        // Hide menu if clicked outside
-        window.onclick = function(event) {
-            if (!event.target.matches('.menu')) {
-                document.getElementById('submenu').style.display = 'none';
-            }
-        }
-    </script>
+    function appendOperation(op) {
+      currentInput += op;
+      document.getElementById("display").value = currentInput;
+    }
+
+    function appendFunction(func) {
+      currentInput += func;
+      document.getElementById("display").value = currentInput;
+    }
+
+    function calculate() {
+      try {
+        const result = math.evaluate(currentInput);
+        document.getElementById("display").value = result;
+        currentInput = result.toString();
+      } catch {
+        document.getElementById("display").value = "Error";
+      }
+    }
+
+    function clearDisplay() {
+      currentInput = "";
+      document.getElementById("display").value = "";
+    }
+
+    function toggleMenu() {
+      const menu = document.getElementById("submenu");
+      menu.style.display = menu.style.display === "block" ? "none" : "block";
+    }
+
+    function toggleScientific() {
+      const sci = document.getElementById("scientific");
+      sci.classList.toggle("active");
+      document.getElementById("submenu").style.display = "none";
+    }
+
+    window.onclick = function (event) {
+      if (!event.target.matches(".menu")) {
+        document.getElementById("submenu").style.display = "none";
+      }
+    };
+  </script>
 </body>
 </html>
